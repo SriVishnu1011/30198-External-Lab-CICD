@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: hospital-app
+
+commonLabels:
+  app: hospital
+  managed-by: kustomize
+
+resources:
+- namespace.yaml
+- configmap.yaml
+- secret.yaml
+- serviceaccount.yaml
+- mysql-deployment.yaml
+- hospital-deployment.yaml
+- hospital-service.yaml
+- hospital-ingress.yaml
+- hpa.yaml
+- network-policy.yaml
+
+replicas:
+- name: hospital-backend
+  count: 2
+
+images:
+- name: srivishnu1011/hospital-backend
+  newTag: latest
+
+configMapGenerator:
+- name: hospital-config
+  behavior: merge
+  literals:
+  - ENVIRONMENT=production
